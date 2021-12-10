@@ -1,0 +1,1 @@
+"C:\Program Files (x86)\Notepad++\notepad++.exe" "C:\Users\lfrybouriaux\Documents\Python\TritonMonitor\config.cfg"
