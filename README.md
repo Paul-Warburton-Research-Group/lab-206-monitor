@@ -26,6 +26,12 @@ Server Files:
 
 An Arduino is used to monitor building services to the dilution fridge. Currently, the compressed air pressure/temperature, and the temperature of the liquid nitrogen trap are measured periodically.
 
+The Arduino firmware is the file `arduino/M32JM-firmware-v1.ino`, which configures the serial connection and performs reading of the sensors every second. Python scripts can communicate with the Arduino using the `arduino_client.py` file which defines the `ArduinoClient` class. The `read()` function is used to update the current measurements (blocks until the Arduino performs the next measurement), which can be accessed using other functions.
+
+The pressure sensor is connected to a T-junction on the CDA inlet. The current model used is [a 100psi sensor](https://uk.rs-online.com/web/p/pressure-sensors/2074701/). This sensor has an integrated temperature sensor which is also used but currently doesn't doesn't tell us much apart from maybe the state of the air-conditioning in the lab.
+
+The trap LN2 level temperature sensor uses a low-temperature range pt1000 resistor in a potential divider configuration to measure the temperature at some level in the trap dewar. The resistance is derived from measurements of the divided voltage using the Arduino on-board ADC.
+
 ### Monitor
 
 A monitor GUI is available that displays live measurements from the dilution fridge and the Arduino sensors. It is configured using the `config.cfg` file and executed with `python live_plotter.py` on Windows. It should be possible to create a shortcut from the desktop and/or in the start menu. The file `Triton Monitor.cmd` was an attempt towards this.
