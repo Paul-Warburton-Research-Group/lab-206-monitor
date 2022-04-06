@@ -24,13 +24,13 @@ Server Files:
 
 ### Arduino
 
-An Arduino is used to monitor building services to the dilution fridge. Currently, the compressed air pressure/temperature, and the temperature of the liquid nitrogen trap are measured periodically.
+An Arduino is used to monitor building services to the dilution fridge. Currently, the compressed air pressure/temperature, and the mass of the liquid nitrogen trap are measured periodically.
 
 The Arduino firmware is the file `arduino/M32JM-firmware-v1.ino`, which configures the serial connection and performs reading of the sensors every second. Python scripts can communicate with the Arduino using the `arduino_client.py` file which defines the `ArduinoClient` class. The `read()` function is used to update the current measurements (blocks until the Arduino performs the next measurement), which can be accessed using other functions.
 
-The pressure sensor is connected to a T-junction on the CDA inlet. The current model used is [a 100psi sensor](https://uk.rs-online.com/web/p/pressure-sensors/2074701/). This sensor has an integrated temperature sensor which is also used but currently doesn't doesn't tell us much apart from maybe the state of the air-conditioning in the lab.
+The pressure sensor is connected to a T-junction on the CDA inlet. The current model used is [a 100psi sensor](https://uk.rs-online.com/web/p/pressure-sensors/2074701/). This sensor has an integrated temperature sensor which is also used but currently doesn't tell us much apart from maybe the state of the air-conditioning in the lab.
 
-The trap LN2 level temperature sensor uses a low-temperature range pt1000 resistor in a potential divider configuration to measure the temperature at some level in the trap dewar. The resistance is derived from measurements of the divided voltage using the Arduino on-board ADC.
+The mass of the LN2 trap is measured using a hacked load cell from a cheap commercial scale. The Arduino is fitted with the HX711 load cell SparkFun board, which is operated using the Arduino library created by Bogdan Necula. The scale was precalibrated using a known mass.
 
 ### Monitor
 
