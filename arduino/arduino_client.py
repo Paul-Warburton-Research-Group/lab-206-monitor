@@ -2,6 +2,7 @@ import serial as s
 import sys
 import time
 import numpy as np
+import struct
 
 CMDS = [
 	"CDA Temp (C)",
@@ -12,7 +13,7 @@ CMDS = [
 class ArduinoClient:
 	def __init__(self, port, baud):
 		try:
-			self.session = s.Serial(port, baud, timeout=1)
+			self.session = s.Serial(port, baud, timeout=10)
 		except OSError as e:
 			print (e)
 			sys.exit(1)
@@ -52,7 +53,14 @@ class ArduinoClient:
 	# Readings
 	def read(self):
 		self.session.reset_input_buffer()
-		data = self.session.read(8)
+		data = self.session.read(10)
+		if data == b'' or len(data) < 10:
+			ret = {
+				"CDA Temp (C)": 0.0,
+				"CDA Pressure (Bar)": 0.0,
+				"Trap Temp": 0.0
+			}
+			return ret
 		
 		status = int.from_bytes(data[0:2],'little',signed=False)
 		if status == 3:
@@ -61,12 +69,11 @@ class ArduinoClient:
 		cda_pr = (pcount-1000)*6.89476/14000
 		tcount = int.from_bytes(data[4:6],'little',signed=False)
 		cda_tmp = tcount*200/2048 - 50
-		trcount = int.from_bytes(data[6:8],'little',signed=True)
-		trap_tmp = self.ADCout2Temp(trcount)
+		trcount = struct.unpack('<f', data[6:10])[0]
 		ret = {
 			"CDA Temp (C)": cda_tmp,
 			"CDA Pressure (Bar)": cda_pr,
-			"Trap Temp": trap_tmp
+			"Trap Temp": trcount+200.0
 		}
 		return ret
 	
@@ -74,7 +81,12 @@ class ArduinoClient:
 		self.session.close()
 
 
-
+#c = ArduinoClient("COM5", 115200)
+#i = 50
+#while i > 0:
+#	print(c.read())
+#	i-=1
+#	#time.sleep(2)
 
 
 
